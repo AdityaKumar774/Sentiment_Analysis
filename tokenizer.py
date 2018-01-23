@@ -33,14 +33,14 @@ def preprocess(s, lowercase=False):
     tokens = tokenize(s)
     if lowercase:
         tokens = [token if emoticons_re.search(token) else token.lower() for token in tokens]
-        return tokens
+    return tokens
 
 
 from nltk.corpus import stopwords
 import string
 
 punctuation = list(string.punctuation)
-stop = stopwords.words('english') + punctuation + ['rt', 'RT', 'via']
+stop = stopwords.words('english') + punctuation + ['rt', 'via']
 fname = '/home/knight/PycharmProjects/Sentiment_Analysis/Twitter_Analysis/data.json'
 
 with open(fname, 'r', newline='\r\n') as f:
@@ -56,4 +56,36 @@ with open(fname, 'r', newline='\r\n') as f:
         # count term only (no hash tags, no mentions)
         terms_only = [term for term in preprocess(tweet['text'].lower()) if term not in stop]
 
-        
+        terms_all = [term for term in preprocess(tweet['text'])]
+        # print all the terms
+
+        new_terms = []
+        for term in terms_only:
+            if len(term) > 3:
+                new_terms.append(term)
+
+        count_all.update(new_terms)  # update the counter
+    print(count_all.most_common(50))
+
+
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
+import pandas as pd
+
+data = count_all.most_common(50)
+df = pd.DataFrame(data)
+df.columns = ('terms', 'frec')
+print(df.head())
+word_string = ' '
+for index, row in df.iterrows():
+    word_string += (row['terms'] + ' ')*row['frec']
+
+wordcloud = WordCloud(font_path='/home/knight/PycharmProjects/Sentiment_Analysis/Twitter_Analysis/Quesha.ttf',
+                      stopwords=STOPWORDS,
+                      background_color='white',
+                      width=1200,
+                      height=1000
+                      ).generate(word_string)
+plt.imshow(wordcloud)
+plt.axis('off')
+plt.show()
