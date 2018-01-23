@@ -30,5 +30,5 @@ class MyListener(StreamListener):
 
 
 twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=['Padmaavat'])
+twitter_stream.filter(track=['Manchester United'])
  
