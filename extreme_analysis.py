@@ -14,6 +14,8 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
+
+
 class MyListener(StreamListener):
     def on_data(self, data):
         try:
@@ -21,11 +23,20 @@ class MyListener(StreamListener):
             tweet = all_data['text']
             txtblb = TextBlob(tweet).sentiment
             print(tweet, txtblb.polarity, txtblb.subjectivity)
-            if txtblb.subjectivity*100 >= 60:
+            if txtblb.subjectivity * 100 >= 60:
                 output = open("data.txt", "a")
                 output.write(str(txtblb.polarity))
                 output.write('\n')
                 output.close()
                 return True
         except BaseException as e:
-            print("Error on data: %s" %str(e))
+            print("Error on data: %s" % str(e))
+        return True
+
+    def on_error(self, status):
+        print(status)
+        return True
+
+
+twitter_stream = Stream(auth, MyListener())
+twitter_stream.filter(track=['Manchester United'])
