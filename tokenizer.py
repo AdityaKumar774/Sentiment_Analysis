@@ -7,6 +7,8 @@ emoticons_str = r"""
        [:=;]
        [oO\-]?
        [D\)\]\(\]/\\OpP]
+       [:;=8]
+       [\-o\*\']?
     )"""
 
 regex_str = [
@@ -14,7 +16,7 @@ regex_str = [
     r'<[^>]+>',  # HTML tags
     r'(?:@[\w_]+)',  # mentions
     r"(?:\#+[\w_]+[\w\'_\-]'[\w_]+)",  # hash tags
-    r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',  # urls
+    r'https?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',  # urls
     r'(?:(?:\d+,?)+(?:\.?\d+)?)',  # numbers
     r"(?:[a-z][a-z'\-_]+[a-z])",  # words with - and _
     r'(?:[\w_]+)',  # other words
@@ -40,7 +42,7 @@ from nltk.corpus import stopwords
 import string
 
 punctuation = list(string.punctuation)
-stop = stopwords.words('english') + punctuation + ['rt', 'via']
+stop = stopwords.words('english') + punctuation + ['rt', 'via', 'created', 'at']
 fname = '/home/knight/PycharmProjects/Sentiment_Analysis/Twitter_Analysis/data.json'
 
 with open(fname, 'r', newline='\r\n') as f:
@@ -61,18 +63,18 @@ with open(fname, 'r', newline='\r\n') as f:
 
         new_terms = []
         for term in terms_only:
-            if len(term) > 3:
+            if len(term) > 2:
                 new_terms.append(term)
 
         count_all.update(new_terms)  # update the counter
-    print(count_all.most_common(50))
+    print(count_all.most_common(500))
 
 
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 import pandas as pd
 
-data = count_all.most_common(50)
+data = count_all.most_common(500)
 df = pd.DataFrame(data)
 df.columns = ('terms', 'frec')
 print(df.head())
@@ -86,6 +88,7 @@ wordcloud = WordCloud(font_path='/home/knight/PycharmProjects/Sentiment_Analysis
                       width=1200,
                       height=1000
                       ).generate(word_string)
+
 plt.imshow(wordcloud)
 plt.axis('off')
 plt.show()
