@@ -1,4 +1,4 @@
-import sys,tweepy,csv,re
+import sys, tweepy, csv, re
 from textblob import TextBlob
 import matplotlib.pyplot as plt
 
@@ -24,14 +24,13 @@ class SentimentAnalysis:
         NoOfTerms = int(input("Enter how many tweets to search: "))
 
         # searching for tweets
-        self.tweets = tweepy.Cursor(api.search, q=searchTerm, lang = "en").items(NoOfTerms)
+        self.tweets = tweepy.Cursor(api.search, q=searchTerm, lang="en").items(NoOfTerms)
 
         # Open/create a file to append data to
         csvFile = open('result.csv', 'a')
 
         # Use csv writer
         csvWriter = csv.writer(csvFile)
-
 
         # creating some variables to store info
         polarity = 0
@@ -43,10 +42,9 @@ class SentimentAnalysis:
         snegative = 0
         neutral = 0
 
-
         # iterating through tweets fetched
         for tweet in self.tweets:
-            #Append to temp so that we can store in csv later. I use encode UTF-8
+            # Append to temp so that we can store in csv later. I use encode UTF-8
             self.tweetText.append(self.cleanTweet(tweet.text).encode('utf-8'))
             # print (tweet.text.translate(non_bmp_map))    #print tweet's text
             analysis = TextBlob(tweet.text)
@@ -67,7 +65,6 @@ class SentimentAnalysis:
                 negative += 1
             elif (analysis.sentiment.polarity > -1 and analysis.sentiment.polarity <= -0.6):
                 snegative += 1
-
 
         # Write to csv and close csv file
         csvWriter.writerow(self.tweetText)
@@ -115,8 +112,8 @@ class SentimentAnalysis:
         print(str(snegative) + "% people thought it was strongly negative")
         print(str(neutral) + "% people thought it was neutral")
 
-        self.plotPieChart(positive, wpositive, spositive, negative, wnegative, snegative, neutral, searchTerm, NoOfTerms)
-
+        self.plotPieChart(positive, wpositive, spositive, negative, wnegative, snegative, neutral, searchTerm,
+                          NoOfTerms)
 
     def cleanTweet(self, tweet):
         # Remove Links, Special Characters etc from tweet
@@ -127,11 +124,14 @@ class SentimentAnalysis:
         temp = 100 * float(part) / float(whole)
         return format(temp, '.2f')
 
-    def plotPieChart(self, positive, wpositive, spositive, negative, wnegative, snegative, neutral, searchTerm, noOfSearchTerms):
-        labels = ['Positive [' + str(positive) + '%]', 'Weakly Positive [' + str(wpositive) + '%]','Strongly Positive [' + str(spositive) + '%]', 'Neutral [' + str(neutral) + '%]',
-                  'Negative [' + str(negative) + '%]', 'Weakly Negative [' + str(wnegative) + '%]', 'Strongly Negative [' + str(snegative) + '%]']
+    def plotPieChart(self, positive, wpositive, spositive, negative, wnegative, snegative, neutral, searchTerm,
+                     noOfSearchTerms):
+        labels = ['Positive [' + str(positive) + '%]', 'Weakly Positive [' + str(wpositive) + '%]',
+                  'Strongly Positive [' + str(spositive) + '%]', 'Neutral [' + str(neutral) + '%]',
+                  'Negative [' + str(negative) + '%]', 'Weakly Negative [' + str(wnegative) + '%]',
+                  'Strongly Negative [' + str(snegative) + '%]']
         sizes = [positive, wpositive, spositive, neutral, negative, wnegative, snegative]
-        colors = ['yellowgreen','lightgreen','darkgreen', 'gold', 'red','lightsalmon','darkred']
+        colors = ['yellowgreen', 'lightgreen', 'darkgreen', 'gold', 'red', 'lightsalmon', 'darkred']
         patches, texts = plt.pie(sizes, colors=colors, startangle=90)
         plt.legend(patches, labels, loc="best")
         plt.title('How people are reacting on ' + searchTerm + ' by analyzing ' + str(noOfSearchTerms) + ' Tweets.')
@@ -140,7 +140,6 @@ class SentimentAnalysis:
         plt.show()
 
 
-
-if __name__== "__main__":
+if __name__ == "__main__":
     sa = SentimentAnalysis()
 sa.DownloadData()
